@@ -156,13 +156,13 @@ const questions = [
   {q:"Which HTML5 element is best suited for self-contained content like articles or blog posts?", options:["<section>","<article>","<div>","<aside>"], answer:1},
   {q:"Which attribute allows an <iframe> to load content lazily?", options:["loading='lazy'","async='true'","defer='true'","lazy='true'"], answer:0},
   {q:"What is the correct way to embed a video that plays without controls?", options:["<video src='video.mp4' autoplay muted></video>","<video src='video.mp4' no-controls></video>","<video src='video.mp4' hidden></video>","<video src='video.mp4' preload></video>"], answer:0},
-  {q:"Which attribute is necessary to make an HTML <form> submit data via URL query parameters?", options:["method='get'","action='url'","enctype='text'","target='_blank'"], answer:0},
-  {q:"Which semantic element is intended for site-wide navigation links?", options:["<nav>","<header>","<menu>","<ul>"], answer:0},
-  {q:"Which CSS property allows an element to ignore its parent’s overflow settings and stay visible?", options:["position: fixed","z-index: auto","overflow: visible","clip-path: none"], answer:0},
+  {q:"Which attribute is necessary to make an HTML <form> submit data via URL query parameters?", options:["target='_blank'","method='get'","action='url'","enctype='text'"], answer:1},
+  {q:"Which semantic element is intended for site-wide navigation links?", options:["<header>","<menu>","<ul>","<nav>",], answer:3},
+  {q:"Which CSS property allows an element to ignore its parent’s overflow settings and stay visible?", options:["z-index: auto","overflow: visible","clip-path: none","position: fixed",], answer:3},
   {q:"In flexbox, what does 'flex: 1 0 auto' mean?", options:["flex-grow:1; flex-shrink:0; flex-basis:auto","flex-grow:0; flex-shrink:1; flex-basis:auto","flex:1; flex:auto; flex:0","flex-grow:auto; flex-shrink:auto; flex-basis:1"], answer:0},
-  {q:"Which CSS function creates a gradient that repeats itself?", options:["repeating-linear-gradient()","linear-gradient()","gradient-repeat()","radial-gradient()"], answer:0},
-  {q:"Which pseudo-element is used to insert content before an element?", options:["::before","::after","::first-line","::first-letter"], answer:0},
-  {q:"How can you select only direct child <li> elements of a <ul>?", options:["ul > li","ul li","ul + li","ul ~ li"], answer:0}
+  {q:"Which CSS function creates a gradient that repeats itself?", options:["repeating-linear-gradient()","gradient-repeat()","radial-gradient()"], answer:0},
+  {q:"Which pseudo-element is used to insert content before an element?", options:["::after","::before","::first-line","::first-letter"], answer:1},
+  {q:"How can you select only direct child <li> elements of a <ul>?", options:["ul li","ul + li","ul > li","ul ~ li"], answer:2}
 ];
 
 let current = 0;
