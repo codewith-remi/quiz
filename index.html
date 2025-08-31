@@ -229,13 +229,13 @@ function animateScore(){
 
 // Share functions
 function shareFacebook(){
-  const link = "https://yourwebsite.com"; // replace with your hosted quiz URL
+  const link = "https://quiz-silk-chi.vercel.app"; // replace with your hosted quiz URL
   const text = encodeURIComponent(`${username} scored ${score}/${questions.length} on this programming quiz! Try it yourself: ${link}`);
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`, '_blank');
 }
 
 function shareWhatsApp(){
-  const link = "https://yourwebsite.com"; // replace with your hosted quiz URL
+  const link = "https://quiz-silk-chi.vercel.app"; // replace with your hosted quiz URL
   const text = encodeURIComponent(`${username} scored ${score}/${questions.length} on this programming quiz! Try it yourself: ${link}`);
   window.open(`https://wa.me/?text=${text}`, '_blank');
 }
