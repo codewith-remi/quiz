@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Quiz Challenge</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #1e1e2f, #3a3a5c, #1e1e2f, #3a3a5c);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: #fff;
+}
+@keyframes gradientBG {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+header {
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 20px;
+  box-sizing:border-box;
+  font-family:'Roboto', sans-serif;
+  color:#fff;
+}
+header div.logo { font-size:20px; font-weight:bold; }
+header div.follow {
+  display:flex; 
+  align-items:center; 
+  gap:10px; 
+  font-size:14px;
+}
+header div.follow button {
+  padding:5px 10px; 
+  border:none; 
+  border-radius:6px; 
+  cursor:pointer; 
+  font-size:12px; 
+  font-weight:bold;
+}
+header div.follow button.facebook { background:#3b5998; color:white; }
+header div.follow button.instagram { background:#E1306C; color:white; }
+
+.container {
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+  background: rgba(30,30,50,0.9);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+  margin-top:20px;
+}
+
+h1,h2 { margin-bottom: 20px; }
+button {
+  padding: 12px 25px;
+  margin: 10px 0;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+button:hover { transform: scale(1.05); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
+
+.option {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  background: #444;
+  color: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.option.correct { background: #28a745 !important; }
+.option.wrong { background: #dc3545 !important; }
+
+.hidden { display: none; }
+.score { font-size: 24px; margin: 20px 0; }
+
+.share-buttons button { margin: 5px; }
+.share-facebook { background:#3b5998; color:white; }
+.share-whatsapp { background:#25D366; color:white; }
+
+#confetti-canvas { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1000; }
+input { padding:10px; border-radius:8px; border:none; margin-top:10px; font-size:16px; width:80%; }
+@media(max-width:480px){
+  header { flex-direction: column; gap:10px; align-items:flex-start; }
+  header div.follow { flex-wrap:wrap; gap:5px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Header -->
+<header>
+  <div class="logo">CodeWithRemi</div>
+  <div class="follow">
+    <span>Follow me:</span>
+    <button class="facebook" onclick="window.open('https://www.facebook.com/share/19TJKx4N8W/', '_blank')">Facebook</button>
+    <button class="instagram" onclick="window.open('https://www.instagram.com/remi_dev40?igsh=dTZIa3Bwd3Jwb3Bp&utm_source=ig_contact_invite', '_blank')">Instagram</button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Name input screen -->
+  <div id="home">
+    <h1>Enter Your Name to Start Quiz</h1>
+    <h2 style="margin-bottom:10px; color:#FFD700;">
+      Think you’ve got what it takes to master HTML & CSS? Prove it by answering these questions correctly!
+    </h2>
+    <input type="text" id="username" placeholder="Your Name"/>
+    <br>
+    <button onclick="startQuiz()">Start Quiz</button>
+  </div>
+
+  <!-- Quiz screen -->
+  <div id="quiz" class="hidden">
+    <h2 id="question"></h2>
+    <div id="options"></div>
+  </div>
+
+  <!-- Score screen -->
+  <div id="scoreScreen" class="hidden">
+    <h2 id="scoreTitle"></h2>
+    <div class="score" id="finalScore">0/0</div>
+    <div id="message"></div>
+    <div class="share-buttons">
+      <button class="share-facebook" onclick="shareFacebook()">Share on Facebook</button>
+      <button class="share-whatsapp" onclick="shareWhatsApp()">Share on WhatsApp</button>
+    </div>
+    <button onclick="restartQuiz()">Play Again</button>
+  </div>
+</div>
+
+<script>
+// Questions (10)
+const questions = [
+  {q:"Which HTML5 element is best suited for self-contained content like articles or blog posts?", options:["<section>","<article>","<div>","<aside>"], answer:1},
+  {q:"Which attribute allows an <iframe> to load content lazily?", options:["loading='lazy'","async='true'","defer='true'","lazy='true'"], answer:0},
+  {q:"What is the correct way to embed a video that plays without controls?", options:["<video src='video.mp4' autoplay muted></video>","<video src='video.mp4' no-controls></video>","<video src='video.mp4' hidden></video>","<video src='video.mp4' preload></video>"], answer:0},
+  {q:"Which attribute is necessary to make an HTML <form> submit data via URL query parameters?", options:["method='get'","action='url'","enctype='text'","target='_blank'"], answer:0},
+  {q:"Which semantic element is intended for site-wide navigation links?", options:["<nav>","<header>","<menu>","<ul>"], answer:0},
+  {q:"Which CSS property allows an element to ignore its parent’s overflow settings and stay visible?", options:["position: fixed","z-index: auto","overflow: visible","clip-path: none"], answer:0},
+  {q:"In flexbox, what does 'flex: 1 0 auto' mean?", options:["flex-grow:1; flex-shrink:0; flex-basis:auto","flex-grow:0; flex-shrink:1; flex-basis:auto","flex:1; flex:auto; flex:0","flex-grow:auto; flex-shrink:auto; flex-basis:1"], answer:0},
+  {q:"Which CSS function creates a gradient that repeats itself?", options:["repeating-linear-gradient()","linear-gradient()","gradient-repeat()","radial-gradient()"], answer:0},
+  {q:"Which pseudo-element is used to insert content before an element?", options:["::before","::after","::first-line","::first-letter"], answer:0},
+  {q:"How can you select only direct child <li> elements of a <ul>?", options:["ul > li","ul li","ul + li","ul ~ li"], answer:0}
+];
+
+let current = 0;
+let score = 0;
+let username = "";
+
+// Quiz functions
+function startQuiz() {
+  username = document.getElementById('username').value.trim();
+  if(!username){ alert("Please enter your name"); return; }
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[current];
+  document.getElementById('question').textContent = q.q;
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+  q.options.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.className = 'option';
+    btn.onclick = () => checkAnswer(i, btn);
+    optionsDiv.appendChild(btn);
+    btn.style.opacity = 0;
+    setTimeout(()=> btn.style.opacity=1, 100*i);
+  });
+}
+
+function checkAnswer(selected, btn){
+  const q = questions[current];
+  if(selected === q.answer) { score++; btn.classList.add('correct'); }
+  else { btn.classList.add('wrong'); }
+  setTimeout(()=>{
+    current++;
+    if(current < questions.length) showQuestion();
+    else showScore();
+  }, 700);
+}
+
+function showScore(){
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('scoreScreen').classList.remove('hidden');
+  document.getElementById('scoreTitle').textContent = `Well done, ${username}!`;
+  animateScore();
+  let msg = "";
+  if(score === questions.length) { msg = "Amazing! You're a true coding pro! "; launchConfetti(); }
+  else if(score >=7) msg = "Great! You have solid skills!";
+  else msg = "Not bad, keep practicing!";
+  document.getElementById('message').textContent = msg;
+}
+
+function animateScore(){
+  const finalScoreEl = document.getElementById('finalScore');
+  let counter=0;
+  const interval = setInterval(()=>{
+    finalScoreEl.textContent = `${counter} / ${questions.length}`;
+    counter++;
+    if(counter>score) clearInterval(interval);
+  },150);
+}
+
+// Share functions
+function shareFacebook(){
+  const link = "https://yourwebsite.com"; // replace with your hosted quiz URL
+  const text = encodeURIComponent(`${username} scored ${score}/${questions.length} on this programming quiz! Try it yourself: ${link}`);
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`, '_blank');
+}
+
+function shareWhatsApp(){
+  const link = "https://yourwebsite.com"; // replace with your hosted quiz URL
+  const text = encodeURIComponent(`${username} scored ${score}/${questions.length} on this programming quiz! Try it yourself: ${link}`);
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
+function restartQuiz(){
+  current=0; score=0; username="";
+  document.getElementById('username').value="";
+  document.getElementById('scoreScreen').classList.add('hidden');
+  document.getElementById('home').classList.remove('hidden');
+}
+
+// Confetti effect
+const confettiCanvas = document.getElementById('confetti-canvas');
+const ctx = confettiCanvas.getContext('2d');
+let confettiPieces = [];
+function resizeCanvas(){ confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class Confetti {
+  constructor(){ 
+    this.x=Math.random()*confettiCanvas.width; 
+    this.y=Math.random()*-confettiCanvas.height; 
+    this.r=Math.random()*6+4; 
+    this.d=Math.random()*confettiCanvas.height; 
+    this.color=`hsl(${Math.random()*360},100%,50%)`;
+    this.tilt=Math.random()*10-10; 
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.lineWidth=this.r/2;
+    ctx.strokeStyle=this.color;
+    ctx.moveTo(this.x+this.tilt,this.y);
+    ctx.lineTo(this.x,this.y+this.tilt+this.r);
+    ctx.stroke();
+  }
+  update(){ this.y+=Math.cos(this.d)+1+this.r/2; this.tilt+=Math.sin(this.d); if(this.y>confettiCanvas.height) this.y=-10; }
+}
+
+function launchConfetti(){
+  confettiPieces = [];
+  for(let i=0;i<150;i++){ confettiPieces.push(new Confetti()); }
+  requestAnimationFrame(updateConfetti);
+}
+
+function updateConfetti(){
+  ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  confettiPieces.forEach(c=>{ c.update(); c.draw(); });
+  if(confettiPieces.length>0) requestAnimationFrame(updateConfetti);
+}
+</script>
+</body>
+</html>
